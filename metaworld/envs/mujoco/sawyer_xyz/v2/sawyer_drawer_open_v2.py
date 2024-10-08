@@ -18,11 +18,18 @@ class SawyerDrawerOpenEnvV2(SawyerXYZEnv):
         render_mode: RenderMode | None = None,
         camera_name: str | None = None,
         camera_id: int | None = None,
+        **kwargs,
     ) -> None:
-        hand_low = (-0.5, 0.40, 0.05)
-        hand_high = (0.5, 1, 0.5)
-        obj_low = (-0.1, 0.9, 0.0)
-        obj_high = (0.1, 0.9, 0.0)
+        
+        hand_low_default = (-0.5, 0.40, 0.05)
+        hand_high_default = (0.5, 1, 0.5)
+        obj_low_default = (-0.1, 0.9, 0.0)
+        obj_high_default = (0.1, 0.9, 0.0)
+        
+        hand_low = kwargs.get('hand_low', hand_low_default)
+        hand_high = kwargs.get('hand_high', hand_high_default)
+        obj_low = kwargs.get('obj_pos', obj_low_default)
+        obj_high = kwargs.get('obj_pos', obj_high_default)
 
         super().__init__(
             hand_low=hand_low,
@@ -34,8 +41,8 @@ class SawyerDrawerOpenEnvV2(SawyerXYZEnv):
 
         self.init_config: InitConfigDict = {
             "obj_init_angle": 0.3,
-            "obj_init_pos": np.array([0.0, 0.9, 0.0], dtype=np.float32),
-            "hand_init_pos": np.array([0, 0.6, 0.2], dtype=np.float32),
+            "obj_init_pos": np.array([0.0, 0.9, 0.0], dtype=np.float32), 
+            "hand_init_pos": np.array([0.0, 0.6, 0.2], dtype=np.float32),   # 0.0, 0.6
         }
         self.obj_init_pos = self.init_config["obj_init_pos"]
         self.obj_init_angle = self.init_config["obj_init_angle"]

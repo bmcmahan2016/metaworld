@@ -20,13 +20,20 @@ class SawyerHammerEnvV2(SawyerXYZEnv):
         render_mode: RenderMode | None = None,
         camera_name: str | None = None,
         camera_id: int | None = None,
+        **kwargs,
     ) -> None:
+
         hand_low = (-0.5, 0.40, 0.05)
         hand_high = (0.5, 1, 0.5)
-        obj_low = (-0.1, 0.4, 0.0)
-        obj_high = (0.1, 0.5, 0.0)
-        goal_low = (0.2399, 0.7399, 0.109)
-        goal_high = (0.2401, 0.7401, 0.111)
+        obj_low_default = (-0.1, 0.4, 0.0)
+        obj_high_default = (0.1, 0.5, 0.0)
+        obj_low = kwargs.get('obj_low', obj_low_default)
+        obj_high = kwargs.get('obj_high', obj_high_default)
+
+        goal_low_default = (0.2399, 0.7399, 0.109)
+        goal_high_default = (0.2401, 0.7401, 0.111)
+        goal_low = kwargs.get('goal_low', goal_low_default)
+        goal_high = kwargs.get('goal_high', goal_high_default)
 
         super().__init__(
             hand_low=hand_low,

@@ -192,7 +192,7 @@ class SawyerXYZEnv(SawyerMocapBase, EzPickle):
         self.mocap_high = np.hstack(mocap_high)
         self.curr_path_length: int = 0
         self.seeded_rand_vec: bool = False
-        self._freeze_rand_vec: bool = True
+        self._freeze_rand_vec: bool = False
         self._last_rand_vec: npt.NDArray[Any] | None = None
         self.num_resets: int = 0
         self.current_seed: int | None = None
@@ -288,7 +288,7 @@ class SawyerXYZEnv(SawyerMocapBase, EzPickle):
         data = pickle.loads(task.data)
         assert isinstance(self, data["env_cls"])
         del data["env_cls"]
-        self._freeze_rand_vec = True
+        self._freeze_rand_vec = False
         self._last_rand_vec = data["rand_vec"]
         del data["rand_vec"]
         self._partially_observable = data["partially_observable"]
@@ -334,7 +334,8 @@ class SawyerXYZEnv(SawyerMocapBase, EzPickle):
         """
         qpos = self.data.qpos.flat.copy()
         qvel = self.data.qvel.flat.copy()
-        qpos[9:12] = pos.copy()
+        # BM: only relevent dimensions of qpos are set
+        qpos[9:12] = pos.copy()[:len(qpos[9:12])]
         qvel[9:15] = 0
         self.set_state(qpos, qvel)
 
@@ -652,7 +653,7 @@ class SawyerXYZEnv(SawyerMocapBase, EzPickle):
             The `(obs, info)` tuple.
         """
         self.curr_path_length = 0
-        self.reset_model()
+        #self.reset_model()
         obs, info = super().reset()
         self._prev_obs = obs[:18].copy()
         obs[18:36] = self._prev_obs
@@ -666,6 +667,8 @@ class SawyerXYZEnv(SawyerMocapBase, EzPickle):
             steps: The number of steps to take to reset the hand.
         """
         mocap_id = self.model.body_mocapid[self.data.body("mocap").id]
+        # BM: randomizing arm starting position appears to break things
+        #self.hand_init_pos = np.random.uniform(self.hand_low, self.hand_high,size=self.hand_low.size)
         for _ in range(steps):
             self.data.mocap_pos[mocap_id][:] = self.hand_init_pos
             self.data.mocap_quat[mocap_id][:] = np.array([1, 0, 1, 0])
@@ -674,10 +677,10 @@ class SawyerXYZEnv(SawyerMocapBase, EzPickle):
 
     def _get_state_rand_vec(self) -> npt.NDArray[np.float64]:
         """Gets or generates a random vector for the hand position at reset."""
-        if self._freeze_rand_vec:
+        if False: #self._freeze_rand_vec:
             assert self._last_rand_vec is not None
             return self._last_rand_vec
-        elif self.seeded_rand_vec:
+        elif False: #self.seeded_rand_vec:
             assert self._random_reset_space is not None
             rand_vec = self.np_random.uniform(
                 self._random_reset_space.low,

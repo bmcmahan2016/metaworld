@@ -35,13 +35,19 @@ class SawyerPushEnvV2(SawyerXYZEnv):
         render_mode: RenderMode | None = None,
         camera_name: str | None = None,
         camera_id: int | None = None,
+        **kwargs,
     ) -> None:
+
         hand_low = (-0.5, 0.40, 0.05)
         hand_high = (0.5, 1, 0.5)
-        obj_low = (-0.1, 0.6, 0.02)
-        obj_high = (0.1, 0.7, 0.02)
-        goal_low = (-0.1, 0.8, 0.01)
-        goal_high = (0.1, 0.9, 0.02)
+        obj_low_default = (-0.1, 0.6, 0.02)
+        obj_high_default = (0.1, 0.7, 0.02)
+        obj_low = kwargs.get('obj_low', obj_low_default)
+        obj_high = kwargs.get('obj_high', obj_high_default)
+        goal_low_default = (0.0, 0.8, 0.01) #(-0.1, 0.8, 0.01)
+        goal_high_default = (0.0, 0.8, 0.01) #(0.1, 0.9, 0.02)
+        goal_low = kwargs.get('goal_low', goal_low_default)
+        goal_high = kwargs.get('goal_high', goal_high_default)
 
         super().__init__(
             hand_low=hand_low,

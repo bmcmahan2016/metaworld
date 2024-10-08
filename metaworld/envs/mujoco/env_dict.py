@@ -179,11 +179,11 @@ def _create_observable_goal_envs(all_envs: EnvDict) -> EnvDict:
     for env_name, env_cls in all_envs.items():
         d = {}
 
-        def initialize(env, seed=None, render_mode=None):
+        def initialize(env, seed=None, render_mode=None, **kwargs):
             if seed is not None:
                 st0 = np.random.get_state()
                 np.random.seed(seed)
-            super(type(env), env).__init__()
+            super(type(env), env).__init__(**kwargs)
 
             env._partially_observable = False
             env._freeze_rand_vec = False
